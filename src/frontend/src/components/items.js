@@ -1,8 +1,4 @@
-const backgrounds = [
-    "background1.jpg",
-    "background2.jpg",
-    "background3.jpg"
-];
+
 
 const hats = [
     "hat1.png",
@@ -10,7 +6,6 @@ const hats = [
     "hat3.png"
 ];
 
-let currentBackgroundIndex = 0;
 let currentHatIndex = 0;
 
 export function openItems() {
@@ -40,26 +35,6 @@ export function openItems() {
     header.appendChild(title);
     header.appendChild(closeButton);
 
-    // Background Selector
-    const backgroundContainer = document.createElement("div");
-    backgroundContainer.classList.add("selection-container");
-
-    const bgLeftButton = document.createElement("button");
-    bgLeftButton.textContent = "<";
-    bgLeftButton.classList.add("nav-button");
-    bgLeftButton.addEventListener("click", () => updateBackground(-1));
-
-    const bgDisplay = document.createElement("img");
-    bgDisplay.src = `./assets/backgrounds/${backgrounds[currentBackgroundIndex]}`;
-    bgDisplay.classList.add("item-preview");
-    bgDisplay.id = "backgroundPreview";
-
-    const bgRightButton = document.createElement("button");
-    bgRightButton.textContent = ">";
-    bgRightButton.classList.add("nav-button");
-    bgRightButton.addEventListener("click", () => updateBackground(1));
-
-    backgroundContainer.append(bgLeftButton, bgDisplay, bgRightButton);
 
     // Hat Selector
     const hatContainer = document.createElement("div");
@@ -83,16 +58,11 @@ export function openItems() {
     hatContainer.append(hatLeftButton, hatDisplay, hatRightButton);
 
     // Append everything to the menu container
-    menuContainer.append(header, backgroundContainer, hatContainer);
+    menuContainer.append(header, hatContainer);
     overlay.appendChild(menuContainer);
     document.body.appendChild(overlay);
 }
 
-// Function to update the background
-function updateBackground(direction) {
-    currentBackgroundIndex = (currentBackgroundIndex + direction + backgrounds.length) % backgrounds.length;
-    document.getElementById("backgroundPreview").src = `./assets/backgrounds/${backgrounds[currentBackgroundIndex]}`;
-}
 
 // Function to update the hat
 function updateHat(direction) {
