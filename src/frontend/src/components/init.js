@@ -1,5 +1,6 @@
 import Leaderboard from "./leaderboards.js";
-import { startCamera, captureFrame } from "./video.js";  // Ensure this is correctly imported
+import { startCamera, captureFrame } from "./video.js";
+import { openItems } from "./items.js";
 
 const leaderboard = new Leaderboard();
 
@@ -11,6 +12,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const menuContainer = document.createElement("div");
     menuContainer.classList.add("menu-container");
 
+    // Header container (for title + close button)
+    const header = document.createElement("div");
+    header.classList.add("menu-header");
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.innerHTML = "&#10006;"; // X symbol
+    closeButton.classList.add("close-btn");
+    closeButton.addEventListener("click", () => overlay.remove());
+
+    // Title
+    const title = document.createElement("h2");
+    title.textContent = "Far West AI Game";
+    title.classList.add("menu-title");
+
+    // Append title first, then close button
+    header.appendChild(title);
+    header.appendChild(closeButton);
+
+    // Buttons for the menu
     const buttons = [
         { id: "startButton", text: "Start Game", action: startGame },
         { id: "leaderboardButton", text: "Leaderboards", action: openLeaderboards },
@@ -31,21 +52,18 @@ document.addEventListener("DOMContentLoaded", () => {
         menuContainer.appendChild(button);
     });
 
+    // Append header and buttons to menu container
+    menuContainer.prepend(header);
     overlay.appendChild(menuContainer);
     document.body.appendChild(overlay);
 
     function startGame() {
         console.log("Starting game...");
-        startCamera();  // Ensure camera starts when game starts
+        startCamera();
     }
 
     function openLeaderboards() {
         console.log("Opening leaderboards...");
         leaderboard.open();
-    }
-    
-
-    function openItems() {
-        console.log("Showing items...");
     }
 });
