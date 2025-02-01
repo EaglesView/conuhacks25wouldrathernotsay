@@ -43,6 +43,7 @@ document.addEventListener("DOMContentLoaded", () => {
         console.log("Opening leaderboards...");
         leaderboard.open();
     }
+    
 
     function openItems() {
         console.log("Showing items...");
