@@ -1,10 +1,15 @@
 import Leaderboard from "./leaderboards.js";
-import { startCamera, captureFrame } from "./video.js";
 import { openItems } from "./items.js";
+import { startGame, stopGame, isGameRunning } from "./game.js";
+import { loadNavbar } from "./nav.js"; // Import the function that initializes the navbar
 
 const leaderboard = new Leaderboard();
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Load Navbar dynamically
+    console.log("loaded inside init.js")
+    loadNavbar();
+
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
     overlay.id = "overlay";
@@ -56,11 +61,6 @@ document.addEventListener("DOMContentLoaded", () => {
     menuContainer.prepend(header);
     overlay.appendChild(menuContainer);
     document.body.appendChild(overlay);
-
-    function startGame() {
-        console.log("Starting game...");
-        startCamera();
-    }
 
     function openLeaderboards() {
         console.log("Opening leaderboards...");
