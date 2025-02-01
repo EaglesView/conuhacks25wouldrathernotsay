@@ -8,11 +8,22 @@
 </head>
 <body>
     <h1>Far West AI Game</h1>
-    <video id="video" autoplay></video>
-    <canvas id="canvas"></canvas>
-    <button id="shootButton">Shoot</button>
-    
-    <script src="js/video.js"></script>
-    <script src="js/game.js"></script>
+
+    <!-- Video Container -->
+    <div class="video-container">
+        <video id="video" class="video-frame" autoplay></video>
+        <canvas id="canvas" class="hidden-canvas"></canvas>
+    </div>
+
+    <!-- Game Controls -->
+    <button id="shootButton" class="button">Shoot</button>
+
+    <!-- Init Buttons Container -->
+    <div id="menu-container"></div>
+
+    <!-- Scripts -->
+    <script src="src/components/video.js"></script>
+    <script src="src/components/init.js"></script>
+    <script src="src/components/game.js"></script>
 </body>
 </html>

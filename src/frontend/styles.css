@@ -1,15 +1,86 @@
+/* General Styles */
 body {
     text-align: center;
     background-color: #222;
     color: white;
+    font-family: Arial, sans-serif;
 }
 
-video {
+/* Video Styles */
+.video-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.video-frame {
     width: 640px;
     height: 480px;
     border: 2px solid white;
+    border-radius: 8px;
 }
 
-canvas {
+/* Hidden Canvas */
+.hidden-canvas {
     display: none;
+}
+/* Overlay Styles */
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7); /* Dark transparent overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Centered Panel */
+.menu-container {
+    background-color: #333;
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border: 2px solid white;
+}
+
+/* Buttons */
+.button {
+    background-color: #444;
+    color: white;
+    border: 2px solid white;
+    padding: 12px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+    width: 200px;
+    align-self: center;
+}
+
+.button:hover {
+    background-color: #666;
+}
+
+
+/* Panels */
+.panel {
+    background-color: #333;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    border: 1px solid white;
+}
+
+/* Text */
+.text-highlight {
+    color: #FFD700;
+    font-weight: bold;
 }
