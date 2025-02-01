@@ -1,29 +1,31 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Far West AI Game</title>
-    <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-    <h1>Far West AI Game</h1>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="grid-container">
+      <h1>Far West AI Game</h1>
 
-    <!-- Video Container -->
-    <div class="video-container">
+      <!-- Video Container (Middle Section) -->
+      <div class="video-container">
         <video id="video" class="video-frame" autoplay></video>
         <canvas id="canvas" class="hidden-canvas"></canvas>
-    </div>
+      </div>
 
-    <!-- Game Controls -->
-    <button id="shootButton" class="button">Shoot</button>
+      <!-- Footer Section (Shoot Button) -->
+      <div class="footer">
+        <button id="shootButton" class="button">Shoot</button>
+      </div>
+    </div>
 
     <!-- Init Buttons Container -->
     <div id="menu-container"></div>
-
-    <!-- Scripts -->
-    <script src="src/components/video.js"></script>
-    <script src="src/components/init.js"></script>
-    <script src="src/components/game.js"></script>
-</body>
+  </body>
+  <script type="module" src="src/components/video.js"></script>
+  <script type="module" src="src/components/init.js"></script>
+  <script type="module" src="src/components/game.js"></script>
 </html>

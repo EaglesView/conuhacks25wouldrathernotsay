@@ -5,29 +5,57 @@ body {
     color: white;
     font-family: Arial, sans-serif;
     padding: 0;
+    margin: 0;
     overflow: none;
 }
 
-/* Video Styles */
+/* Grid Container */
+.grid-container {
+    display: grid;
+    grid-template-rows: 48px auto 48px;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+/* Title */
+h1 {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+/* Video Container */
 .video-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    /*margin: 6px;*/
-    width: 100%; /* Full viewport width */
-    height: 100%; /* Full viewport height */
+    width: 100%;
+    height: 100%;
+    /* This will expand in the grid */
     overflow: hidden;
 }
 
+/* Video */
 .video-frame {
-    width: 100%;
-    height: auto;
+    width: 98%;
+    height: 98%;
     max-width: 100%;
     max-height: 100%;
     aspect-ratio: 16 / 9;
     border: 2px solid white;
     border-radius: 8px;
-    object-fit: cover; /* Ensures the video fills the frame while maintaining aspect ratio */
+    object-fit: contain;
+    /* Ensures full visibility of video */
+}
+
+/* Footer (Shoot Button) */
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 
@@ -35,6 +63,7 @@ body {
 .hidden-canvas {
     display: none;
 }
+
 /* Overlay Styles */
 .overlay {
     position: fixed;
@@ -42,7 +71,8 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.7); /* Dark transparent overlay */
+    background-color: rgba(0, 0, 0, 0.7);
+    /* Dark transparent overlay */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -93,4 +123,59 @@ body {
 .text-highlight {
     color: #FFD700;
     font-weight: bold;
+}
+
+.leaderboard-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.leaderboard-content {
+    background: #222;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 400px;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.search-input {
+    margin-bottom: 10px;
+    padding: 5px;
+    width: 100%;
+}
+
+.leaderboard-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+    padding: 10px;
+    border: 1px solid white;
+}
+
+.leaderboard-table th {
+    cursor: pointer;
 }
