@@ -1,9 +1,15 @@
 import Leaderboard from "./leaderboards.js";
-import { startCamera, captureFrame } from "./video.js";  // Ensure this is correctly imported
+import { openItems } from "./items.js";
+import { startGame, stopGame, isGameRunning } from "./game.js";
+import { loadNavbar } from "./nav.js"; // Import the function that initializes the navbar
 
 const leaderboard = new Leaderboard();
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Load Navbar dynamically
+    console.log("loaded inside init.js")
+    loadNavbar();
+
     const overlay = document.createElement("div");
     overlay.classList.add("overlay");
     overlay.id = "overlay";
@@ -11,6 +17,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const menuContainer = document.createElement("div");
     menuContainer.classList.add("menu-container");
 
+    // Header container (for title + close button)
+    const header = document.createElement("div");
+    header.classList.add("menu-header");
+
+    // Close button
+    const closeButton = document.createElement("button");
+    closeButton.innerHTML = "&#10006;"; // X symbol
+    closeButton.classList.add("close-btn");
+    closeButton.addEventListener("click", () => overlay.remove());
+
+    // Title
+    const title = document.createElement("h2");
+    title.textContent = "Far West AI Game";
+    title.classList.add("menu-title");
+
+    // Append title first, then close button
+    header.appendChild(title);
+    header.appendChild(closeButton);
+
+    // Buttons for the menu
     const buttons = [
         { id: "startButton", text: "Start Game", action: startGame },
         { id: "leaderboardButton", text: "Leaderboards", action: openLeaderboards },
@@ -31,21 +57,13 @@ document.addEventListener("DOMContentLoaded", () => {
         menuContainer.appendChild(button);
     });
 
+    // Append header and buttons to menu container
+    menuContainer.prepend(header);
     overlay.appendChild(menuContainer);
     document.body.appendChild(overlay);
-
-    function startGame() {
-        console.log("Starting game...");
-        startCamera();  // Ensure camera starts when game starts
-    }
 
     function openLeaderboards() {
         console.log("Opening leaderboards...");
         leaderboard.open();
-    }
-    
-
-    function openItems() {
-        console.log("Showing items...");
     }
 });
