@@ -179,12 +179,18 @@ while True:
         print("🍊 Player 2 wins!")
         loop = False
         pressed_player2 = False
-        game_result = {"score": f"0", "message": "Player 2 wins!"}
+        game_resulrrrrt = {"score": f"0", "message": "Player 2 wins!"}
         stopwatch_running = False
         start_time = None
 
     elif pressed_player2 and not touch_player2:
         pressed_player2 = False
+
+    # Check for "R" key press to reset loop and countdownStart
+    if cv2.waitKey(1) & 0xFF == ord('r'):  # Check if 'R' is pressed
+        loop = True
+        countdownStart = True
+        print("🔄 Resetting game...")
 
     # Combine left and right views with skeleton overlay
     combined = np.hstack((left_view, right_view))
@@ -192,7 +198,7 @@ while True:
 
     cv2.imshow("Final Output", flipped)
 
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord('q'):  # Exit on 'q' press
         break
 
 cap.release()
