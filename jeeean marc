@@ -177,3 +177,4 @@ while True:
 ###
 cap.release()
 cv2.destroyAllWindows()
+curl -X POST http://192.168.102.5:8080/ -H "Content-Type: application/json" -d "{\"name\": \"start\"}"
