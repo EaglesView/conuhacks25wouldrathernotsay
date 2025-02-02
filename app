@@ -167,7 +167,7 @@ while True:
         print("🍎 Player 1 wins!")
         loop = False
         pressed_player1 = False  # Only reset after confirming the win
-        game_result = {"score": f"0", "message": "Player 1 wins!"}
+        game_result = {"score": f"0", "message": "Player 1 win!"}
         winner_text = "Player 1 wins!"  # Set winner text
         stopwatch_running = False
         start_time = None
@@ -177,7 +177,7 @@ while True:
         print("🍊 Player 2 wins!")
         loop = False
         pressed_player2 = False  # Only reset after confirming the win
-        game_result = {"score": f"0", "message": "Player 2 wins!"}
+        game_result = {"score": f"0", "message": "Player 2 win!"}
         winner_text = "Player 2 wins!"  # Set winner text
         stopwatch_running = False
         start_time = None
@@ -191,7 +191,7 @@ while True:
 
     # Display the winner text on the frame if available
     if winner_text != "":
-        cv2.putText(frame, winner_text, (int(width // 3.5), int(height // 2)), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 5, cv2.LINE_AA)
+        cv2.putText(frame, winner_text, (int(width // 15), int(height // 2)), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 5, cv2.LINE_AA)
 
     # Combine left and right views with skeleton overlay
     combined = np.hstack((left_view, right_view))
@@ -204,3 +204,4 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+ 
