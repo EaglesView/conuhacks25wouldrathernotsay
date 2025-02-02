@@ -9,4 +9,4 @@ export async function getLeaderboardStats() {
       { name: "Bob", points: 900 },
     ];
   }
-  
+   

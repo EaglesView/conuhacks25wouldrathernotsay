@@ -242,7 +242,9 @@ body {
 .leaderboard-table tbody tr:last-child {
     border-bottom: none;
 }
-
+.leaderstats-card {
+    min-width: 400px;
+}
 
 
 
@@ -383,4 +385,16 @@ body {
     flex-direction: column;
     gap: 15px;
     border: 2px solid white;
+}
+.main-menu {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-width: 400px;
+
+}
+
+.game-card {
+    display: flex;
 }

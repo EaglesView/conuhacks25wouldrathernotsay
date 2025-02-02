@@ -1,69 +1,37 @@
 import Leaderboard from "./leaderboards.js";
 import { openItems } from "./items.js";
-import { startGame, stopGame, isGameRunning } from "./game.js";
-import { loadNavbar } from "./nav.js"; // Import the function that initializes the navbar
-
-const leaderboard = new Leaderboard();
+import { startGame } from "./game.js";
+import { loadNavbar } from "./nav.js";
+import Card from "./card.js";
+import NewGame from "./newGame.js"; // Import the overlay component
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Load Navbar dynamically
-    console.log("loaded inside init.js")
+    console.log("loaded inside init.js");
     loadNavbar();
 
-    const overlay = document.createElement("div");
-    overlay.classList.add("overlay");
-    overlay.id = "overlay";
+    // Create menu overlay
+    const menuCard = new Card("Far West AI Game", () => {}, ["main-menu"]);
+    const leaderboard = new Leaderboard(); // Ensures it doesn’t auto-open
+    const gameOverlay = new NewGame(startGame); // Initialize the overlay
 
-    const menuContainer = document.createElement("div");
-    menuContainer.classList.add("menu-container");
-
-    // Header container (for title + close button)
-    const header = document.createElement("div");
-    header.classList.add("menu-header");
-
-    // Close button
-    const closeButton = document.createElement("button");
-    closeButton.innerHTML = "&#10006;"; // X symbol
-    closeButton.classList.add("close-btn");
-    closeButton.addEventListener("click", () => overlay.remove());
-
-    // Title
-    const title = document.createElement("h2");
-    title.textContent = "Far West AI Game";
-    title.classList.add("menu-title");
-
-    // Append title first, then close button
-    header.appendChild(title);
-    header.appendChild(closeButton);
-
-    // Buttons for the menu
     const buttons = [
-        { id: "startButton", text: "Start Game", action: startGame },
-        { id: "leaderboardButton", text: "Leaderboards", action: openLeaderboards },
+        { id: "startButton", text: "Start Game", action: () => gameOverlay.show() },
+        { id: "leaderboardButton", text: "Leaderboards", action: () => leaderboard.open() },
         { id: "itemsButton", text: "Items", action: openItems }
     ];
 
-    buttons.forEach(({ id, text, action }) => {
+    const buttonElements = buttons.map(({ id, text, action }) => {
         const button = document.createElement("button");
         button.id = id;
         button.classList.add("button");
         button.textContent = text;
-
         button.addEventListener("click", () => {
-            overlay.remove();
+            menuCard.close();
             action();
         });
-
-        menuContainer.appendChild(button);
+        return button;
     });
 
-    // Append header and buttons to menu container
-    menuContainer.prepend(header);
-    overlay.appendChild(menuContainer);
-    document.body.appendChild(overlay);
-
-    function openLeaderboards() {
-        console.log("Opening leaderboards...");
-        leaderboard.open();
-    }
+    menuCard.setContent(buttonElements);
+    menuCard.open(); // Opens the menu with buttons on page load
 });

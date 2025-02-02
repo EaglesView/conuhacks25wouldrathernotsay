@@ -1,54 +1,37 @@
 import { getLeaderboardStats } from "./stats.js";
+import Card from "./card.js";
 
 export default class Leaderboard {
     constructor() {
-        this.container = document.createElement("div");
-        this.container.classList.add("leaderboard-overlay");
-        this.container.style.display = "none"; // Hide initially
-
-        this.leaderboard = document.createElement("div");
-        this.leaderboard.classList.add("menu-container", "leaderboard-content");
-
-        // Header container (for close button + title)
-        this.header = document.createElement("div");
-        this.header.classList.add("leaderboard-header");
-
-        // Close button
-        this.closeButton = document.createElement("button");
-        this.closeButton.innerHTML = "&#10006;"; // X symbol
-        this.closeButton.classList.add("close-btn");
-        this.closeButton.addEventListener("click", () => this.close());
-
-        // Title
-        this.title = document.createElement("h2");
-        this.title.textContent = "Leaderstats";
-        this.title.classList.add("leaderboard-title");
-
-        // Append close button first (left), then title (right)
-        this.header.appendChild(this.closeButton);
-        this.header.appendChild(this.title);
-
-        // Search Input
-        this.searchInput = document.createElement("input");
-        this.searchInput.type = "text";
-        this.searchInput.placeholder = "Search by name...";
-        this.searchInput.classList.add("search-input");
-        this.searchInput.addEventListener("input", () => this.filterTable());
-
-        // Table
-        this.table = document.createElement("table");
-        this.table.classList.add("leaderboard-table");
-
-        // Append everything in order
-        this.leaderboard.appendChild(this.header);
-        this.leaderboard.appendChild(this.searchInput);
-        this.leaderboard.appendChild(this.table);
-        this.container.appendChild(this.leaderboard);
-        document.body.appendChild(this.container);
-
-        this.dataLoaded = false; // Flag to load data only once
-        this.sortDirections = [true, true]; // Default sorting order (true = ascending)
+        this.card = null; // Lazy initialization
+        this.dataLoaded = false;
+        this.sortDirections = [true, true];
+     
     }
+
+    async open() {
+        if (!this.card) {
+            this.card = new Card("Leaderstats", () => this.close(),["leaderstats-card"]);
+
+            // Search Input
+            this.searchInput = document.createElement("input");
+            this.searchInput.type = "text";
+            this.searchInput.placeholder = "Search by name...";
+            this.searchInput.classList.add("search-input");
+            this.searchInput.addEventListener("input", () => this.filterTable());
+
+            // Table
+            this.table = document.createElement("table");
+            this.table.classList.add("leaderboard-table");
+
+            this.card.setContent([this.searchInput, this.table]);
+            this.setupEventListeners();
+        }
+
+        this.card.open();
+        this.loadData();
+    }
+
     async loadData() {
         if (!this.dataLoaded) {
             const stats = await getLeaderboardStats();
@@ -56,9 +39,11 @@ export default class Leaderboard {
             this.dataLoaded = true;
         }
     }
-
+    setupEventListeners() {
+        document.querySelector('.search-input').addEventListener('input', (event) => this.filterTable(event));
+    }
     renderTable(data) {
-        this.table.innerHTML = ""; // Clear previous content
+        this.table.innerHTML = "";
 
         const thead = document.createElement("thead");
         const headerRow = document.createElement("tr");
@@ -86,60 +71,9 @@ export default class Leaderboard {
         this.table.appendChild(tbody);
     }
 
-    filterTable() {
-        const query = this.searchInput.value.toLowerCase();
-        const rows = this.table.querySelectorAll("tbody tr");
-
-        rows.forEach((row) => {
-            const name = row.children[0].textContent.toLowerCase();
-            row.style.display = name.includes(query) ? "" : "none";
-        });
-    }
-
-    sortTable(colIndex, headerElement) {
-        const rows = Array.from(this.table.querySelectorAll("tbody tr"));
-        const ascending = this.sortDirections[colIndex]; // Get current direction
-
-        // Sort rows
-        const sortedRows = rows.sort((a, b) => {
-            const valA = a.children[colIndex].textContent;
-            const valB = b.children[colIndex].textContent;
-            return colIndex === 1
-                ? ascending ? Number(valA) - Number(valB) : Number(valB) - Number(valA)
-                : ascending ? valA.localeCompare(valB) : valB.localeCompare(valA);
-        });
-
-        // Update sorting direction
-        this.sortDirections[colIndex] = !ascending;
-
-        // Update the table
-        const tbody = this.table.querySelector("tbody");
-        tbody.innerHTML = "";
-        sortedRows.forEach((row) => tbody.appendChild(row));
-
-        // Update sorting icon
-        this.updateSortIcons(colIndex, headerElement, ascending);
-    }
-
-    updateSortIcons(colIndex, headerElement, ascending) {
-        // Reset all icons
-        const headers = this.table.querySelectorAll("th");
-        headers.forEach((header) => {
-            const icon = header.querySelector(".sort-icon");
-            if (icon) icon.textContent = "";
-        });
-
-        // Set current icon
-        const icon = headerElement.querySelector(".sort-icon");
-        icon.textContent = ascending ? "▲" : "▼"; // Update icon
-    }
-
-    open() {
-        this.container.style.display = "flex";
-        this.loadData(); // Load data when opened
-    }
-
     close() {
-        this.container.style.display = "none";
+        if (this.card) {
+            this.card.close();
+        }
     }
 }
