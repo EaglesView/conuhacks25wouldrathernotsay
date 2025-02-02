@@ -153,6 +153,7 @@ while True:
         print("🍎🍎🍎🍎🍎🍎🍎🍎")
         loop = False
         pressed_player1 = False
+        
     elif pressed_player1 and not touch_player1:
         pressed_player1 = False
 
@@ -177,4 +178,3 @@ while True:
 ###
 cap.release()
 cv2.destroyAllWindows()
-curl -X POST http://192.168.102.5:8080/ -H "Content-Type: application/json" -d "{\"name\": \"start\"}"
