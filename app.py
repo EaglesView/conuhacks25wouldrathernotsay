@@ -7,6 +7,8 @@ import http.server
 import socketserver
 import base64
 import json
+import time
+
 
 from database.model import *
 
@@ -16,10 +18,11 @@ pressed_player2 = False
 loop = False
 
 ##Countdown
-time_ms = 3000
-time_counter = 0
+time1_s = 7
+time2_s = 3
+time_counter = time.time()
 time_to_shoot = False
-chrono = 0
+chrono = None
 ##
 
 class MyHandler(http.server.SimpleHTTPRequestHandler):
@@ -169,15 +172,16 @@ while True:
                 touch_player1 = True
 ###############################
     if loop:
-        time_counter += 1
-        if time_counter >= time_ms:
-            time_to_shoot = True
-            time_counter = 0
+        if time.time() - time_counter >= time_ms:
+        time_to_shoot = True
+        time_counter = time.time()
     
     if time_to_shoot:
-        chrono += 1
-        if chrono >= 2000:
-            chrono = 0
+        if chrono is None:
+            chrono = time.time()
+        
+        if time.time() - chrono >= 3:
+            chrono = None
             time_to_shoot = False
 ###############################
         if touch_player1 and pressed_player1 and loop:
