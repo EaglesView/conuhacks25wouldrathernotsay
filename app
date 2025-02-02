@@ -161,7 +161,7 @@ while True:
             touch_player1 = True
 
     # Determine Winner
-    if touch_player1 and loop:
+    if touch_player1 and pressed_player1 and loop:
         end_time = time.time()
         print("🍎 Player 1 wins!")
         loop = False
@@ -173,7 +173,7 @@ while True:
     elif pressed_player1 and not touch_player1:
         pressed_player1 = False
 
-    if touch_player2 and loop:
+    if touch_player2 and pressed_player2 and loop:
         end_time = time.time()
 
         print("🍊 Player 2 wins!")
