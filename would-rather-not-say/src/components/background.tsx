@@ -1,6 +1,14 @@
-import React, { ReactNode } from "react";
 
-const Background = ({ children }: { children: ReactNode }) => {
+"use client";
+import React, { ReactNode } from "react";
+import { motion } from "framer-motion";
+
+const Background = ({ children, }: { children: ReactNode }) => {
+  const waveVariants = {
+    hidden: { y: 100, opacity: 0 },
+    visible: { y: 0, opacity: 1, transition: { duration: 1, ease: "easeOut" } },
+  };
+
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">
       {/* Children content (placed above the background) */}
@@ -10,11 +18,18 @@ const Background = ({ children }: { children: ReactNode }) => {
 
       {/* Background Waves (behind the content) */}
       <div className="absolute bottom-0 left-0 w-full h-full overflow-hidden z-0">
-        <img src="/Layer 5.svg" alt="Layer 5" className="absolute bottom-0 w-full " />
-        <img src="/Layer 4.svg" alt="Layer 4" className="absolute bottom-0 w-full " />
-        <img src="/Layer 3.svg" alt="Layer 3" className="absolute bottom-0 w-full " />
-        <img src="/Layer 2.svg" alt="Layer 2" className="absolute bottom-0 w-full " />
-        <img src="/layer 1.svg" alt="Layer 1" className="absolute bottom-0 w-full " />
+        {[5, 4, 3, 2, 1].map((layer, index) => (
+          <motion.img
+            key={layer}
+            src={`/Layer ${layer}.svg`}
+            alt={`Layer ${layer}`}
+            className="absolute bottom-0 w-full"
+            initial="hidden"
+            animate="visible"
+            variants={waveVariants}
+            style={{ zIndex: index }}
+          />
+        ))}
       </div>
     </div>
   );
