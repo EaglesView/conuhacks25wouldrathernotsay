@@ -3,108 +3,177 @@ import numpy as np
 import mediapipe as mp
 import math
 import threading
+import http.server
+import socketserver
 import base64
-import asyncio
-import websockets
+import json
 
-### GLOBAL VARIABLES
-pressed_player1 = False  
-pressed_player2 = False  
-clients = set()  # Store connected WebSocket clients
+# Global state for players (optional)
+pressed_player1 = False
+pressed_player2 = False
+loop = False
 
-# Mediapipe setup
-mp_pose = mp.solutions.pose
-mp_drawing = mp.solutions.drawing_utils
-pose_left = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
-pose_right = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+class MyHandler(http.server.SimpleHTTPRequestHandler):
+    def do_OPTIONS(self):
+        self.send_response(200)
+        self.send_header("Access-Control-Allow-Origin", "*")  # Allow all origins or specify your frontend URL
+        self.send_header("Access-Control-Allow-Methods", "POST, GET, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+        self.end_headers()
 
-cap = cv2.VideoCapture(0)
+    def do_POST(self):
+        global pressed_player1, pressed_player2, loop
+        content_length = int(self.headers.get('Content-Length', 0))
+        post_data = self.rfile.read(content_length).decode("utf-8", errors="replace")
 
-### WebSocket Server Handler
-async def handle_client(websocket, path):
-    global clients
-    clients.add(websocket)
-    try:
-        async for message in websocket:
-            pass  # Currently, the frontend won't send data
-    finally:
-        clients.remove(websocket)
+        if "user1" in post_data:
+            pressed_player1 = True
+        elif "user2" in post_data:
+            pressed_player2 = True
+        elif "start" in post_data:
+            print("STAAAART")
+            loop = True
 
-async def send_frame():
-    while True:
         ret, frame = cap.read()
         if not ret:
-            continue
-        
-        # Encode frame as base64
-        _, buffer = cv2.imencode('.jpg', frame)
+            return
+
+        _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 60])
         jpg_as_base64 = base64.b64encode(buffer).decode('utf-8')
 
-        # Process the frame
-        height, width, channels = frame.shape
-        half_w = width // 2
-        left_view = frame[:, 0:half_w, :]
-        right_view = frame[:, half_w:width, :]
+        response = {
+            "status": "OK",
+            "image": jpg_as_base64
+        }
 
-        left_rgb = cv2.cvtColor(left_view, cv2.COLOR_BGR2RGB)
-        right_rgb = cv2.cvtColor(right_view, cv2.COLOR_BGR2RGB)
+        # Send CORS headers and response
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Access-Control-Allow-Origin", "*")  # Allow all origins or specify your frontend URL
+        self.end_headers()
+        self.wfile.write(json.dumps(response).encode("utf-8"))
 
-        results_left = pose_left.process(left_rgb)
-        results_right = pose_right.process(right_rgb)
+def start_http_server(port=8080):
+    with socketserver.TCPServer(("0.0.0.0", port), MyHandler) as httpd:
+        httpd.serve_forever()
 
-        touch_player1 = False
-        touch_player2 = False
+server_thread = threading.Thread(target=start_http_server, daemon=True)
+server_thread.start()
 
-        # Detect Player 2 movement
-        if results_left.pose_landmarks:
-            mp_drawing.draw_landmarks(left_view, results_left.pose_landmarks)
-            angle_left = math.degrees(math.atan2(
-                results_left.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y -
-                results_left.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].y,
-                results_left.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x -
-                results_left.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].x
-            ))
+class Node:
+    def __init__(self, landmark, frame):
+        self.pos_x = int(landmark.x * frame.shape[1])
+        self.pos_y = int(landmark.y * frame.shape[0])
+    def get_position(self):
+        return self.pos_x, self.pos_y
+
+def calculate_angle(node1, node2):
+    x1, y1 = node1.get_position()
+    x2, y2 = node2.get_position()
+    angle_deg = math.degrees(math.atan2(y2 - y1, x2 - x1))
+    if angle_deg < 0:
+        angle_deg += 360
+    return angle_deg
+
+mp_pose = mp.solutions.pose
+mp_drawing = mp.solutions.drawing_utils
+
+pose_left = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+pose_right = mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5)
+###
+
+
+cap = cv2.VideoCapture(0)
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+    
+    _, buffer = cv2.imencode('.jpg', frame)
+    jpg_as_base64 = base64.b64encode(buffer).decode('utf-8')
+
+
+    ####
+    height, width, channels = frame.shape
+    half_w = width // 2
+
+    left_view = frame[:, 0:half_w, :]
+    right_view = frame[:, half_w:width, :]
+
+    left_rgb = cv2.cvtColor(left_view, cv2.COLOR_BGR2RGB)
+    right_rgb = cv2.cvtColor(right_view, cv2.COLOR_BGR2RGB)
+
+    results_left = pose_left.process(left_rgb)
+    touch_player2 = False
+    if results_left.pose_landmarks:
+        mp_drawing.draw_landmarks(
+            left_view,
+            results_left.pose_landmarks,
+            connections=[(mp_pose.PoseLandmark.RIGHT_ELBOW, mp_pose.PoseLandmark.RIGHT_WRIST)]
+        )
+        nodes_left = {}
+        for landmark in [mp_pose.PoseLandmark.RIGHT_ELBOW, mp_pose.PoseLandmark.RIGHT_WRIST]:
+            lmk = results_left.pose_landmarks.landmark[landmark]
+            nodes_left[landmark] = Node(lmk, left_view)
+            x, y = nodes_left[landmark].get_position()
+            cv2.circle(left_view, (x, y), 10, (255, 255, 255), -1)
+        if (mp_pose.PoseLandmark.RIGHT_ELBOW in nodes_left and
+            mp_pose.PoseLandmark.RIGHT_WRIST in nodes_left):
+            angle_left = calculate_angle(
+                nodes_left[mp_pose.PoseLandmark.RIGHT_ELBOW],
+                nodes_left[mp_pose.PoseLandmark.RIGHT_WRIST]
+            )
             if angle_left >= 330 or angle_left <= 30:
                 touch_player2 = True
 
-        # Detect Player 1 movement
-        if results_right.pose_landmarks:
-            mp_drawing.draw_landmarks(right_view, results_right.pose_landmarks)
-            angle_right = math.degrees(math.atan2(
-                results_right.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].y -
-                results_right.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].y,
-                results_right.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_WRIST].x -
-                results_right.pose_landmarks.landmark[mp_pose.PoseLandmark.RIGHT_ELBOW].x
-            ))
+    results_right = pose_right.process(right_rgb)
+    touch_player1 = False
+    if results_right.pose_landmarks:
+        mp_drawing.draw_landmarks(
+            right_view,
+            results_right.pose_landmarks,
+            connections=[(mp_pose.PoseLandmark.RIGHT_ELBOW, mp_pose.PoseLandmark.RIGHT_WRIST)]
+        )
+        nodes_right = {}
+        for landmark in [mp_pose.PoseLandmark.RIGHT_ELBOW, mp_pose.PoseLandmark.RIGHT_WRIST]:
+            lmk = results_right.pose_landmarks.landmark[landmark]
+            nodes_right[landmark] = Node(lmk, right_view)
+            x, y = nodes_right[landmark].get_position()
+            cv2.circle(right_view, (x, y), 10, (255, 255, 255), -1)
+        if (mp_pose.PoseLandmark.RIGHT_ELBOW in nodes_right and
+            mp_pose.PoseLandmark.RIGHT_WRIST in nodes_right):
+            angle_right = calculate_angle(
+                nodes_right[mp_pose.PoseLandmark.RIGHT_ELBOW],
+                nodes_right[mp_pose.PoseLandmark.RIGHT_WRIST]
+            )
             if 150 <= angle_right <= 210:
                 touch_player1 = True
 
-        # Determine if a player has fired
-        game_over = False
-        if touch_player1 and pressed_player1:
-            game_over = True
-            pressed_player1 = False
-        if touch_player2 and pressed_player2:
-            game_over = True
-            pressed_player2 = False
+    if touch_player1 and pressed_player1 and loop:
+        print("🍎🍎🍎🍎🍎🍎🍎🍎")
+        loop = False
+        pressed_player1 = False
+    elif pressed_player1 and not touch_player1:
+        pressed_player1 = False
 
-        # Send data to WebSocket clients
-        data = {
-            "image": jpg_as_base64,
-            "game_over": game_over
-        }
-        json_data = str(data).replace("'", '"')  # Convert dict to JSON format
+    if touch_player2 and pressed_player2 and loop:
+        print("🍊🍊🍊🍊🍊🍊🍊🍊🍊")
+        loop = False
+        pressed_player2 = False
+    elif pressed_player2 and not touch_player2:
+        pressed_player2 = False
 
-        if clients:
-            await asyncio.wait([client.send(json_data) for client in clients])
+    combined = np.hstack((left_view, right_view))
+    flipped = cv2.flip(combined, 1)
+    ###
 
-        await asyncio.sleep(0.03)  # Send at ~30fps
+    ### flip cest frame modifier
+    cv2.imshow("Final Output", flipped)
+    print(loop)
+    ###
+    if cv2.waitKey(1) & 0xFF == ord('q'):
+        break
 
-# Start WebSocket server
-start_server = websockets.serve(handle_client, "0.0.0.0", 8765)
-
-# Run the WebSocket server and frame sending loop
-async def main():
-    await asyncio.gather(start_server, send_frame())
-
-asyncio.run(main())
+###
+cap.release()
+cv2.destroyAllWindows()

@@ -1,35 +1,55 @@
 "use client";
-import { useEffect, useState } from "react";
 
-const GAME_SERVER = "ws://localhost:8765"; // Replace with actual WebSocket URL
+import { useState, useEffect } from "react";
+import { Button } from "./ui/button";
 
 const GameScreen = ({ onGameOver }: { onGameOver: () => void }) => {
-  const [imageData, setImageData] = useState<string | null>(null);
+  const [status, setStatus] = useState("Waiting for game data...");
+  const [imageData, setImageData] = useState<boolean>(false);
+  const [time, setTime] = useState(0);
+  const [winner, setWinner] = useState("");
 
+  const handlePost = async () => {
+    try {
+      const response = await fetch("http://192.168.102.5:8080/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          time: time,
+          winner: winner,
+        }),
+      });
+      response?(<Button title="Send Data" onClick={handlePost} />      ):("");
+      const data = await response.json();
+      console.log("Response from server:", data);
+    } catch (error) {
+      console.error("Error sending POST request:", error);
+    }
+  };
   useEffect(() => {
-    const ws = new WebSocket(GAME_SERVER);
+    const img = document.getElementById("video_feed") as HTMLImageElement;
 
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        if (data.image) {
-          setImageData(`data:image/jpeg;base64,${data.image}`);
-        }
-        if (data.game_over) {
-          onGameOver();
-        }
-      } catch (error) {
-        console.error("Error parsing WebSocket message:", error);
-      }
-    };
+    if (img) {
+      img.onerror = () => {
+        console.log("Connexion perdue. Tentative de reconnexion...");
+        setTimeout(() => location.reload(), 3000);
+      };
+    }
 
-    return () => ws.close();
-  }, [onGameOver]);
+    // Simulate image data being available after some time (You can replace this with actual logic)
+    setTimeout(() => {
+      setImageData(true); // Set imageData to true after 3 seconds
+      setStatus("Game data received!");
+    }, 3000);
+  }, []);
 
   return (
     <div className="flex justify-center items-center">
+      <p className="fixed bottom-0">{status}</p>
       {imageData ? (
-        <img src={imageData} alt="Game Feed" className="w-full max-w-screen-md rounded-lg shadow-lg" />
+        <img id="video_feed" src="http://192.168.102.5:5000/video_feed" className="transform scale-x-[-1] rounded-sm w-auto h-screen"/>
       ) : (
         <p>Waiting for game data...</p>
       )}
