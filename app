@@ -1,4 +1,3 @@
-
 import cv2
 import numpy as np
 import mediapipe as mp
@@ -169,7 +168,7 @@ while True:
         loop = False
         pressed_player1 = False  # Only reset after confirming the win
         game_result = {"score": f"0", "message": "Player 1 win!"}
-        winner_text = "Player 1 wins!"  # Set winner text
+        winner_text = "Player 1 win!"  # Set winner text
         stopwatch_running = False
         start_time = None
 
@@ -179,7 +178,7 @@ while True:
         loop = False
         pressed_player2 = False  # Only reset after confirming the win
         game_result = {"score": f"0", "message": "Player 2 win!"}
-        winner_text = "Player 2 wins!"  # Set winner text
+        winner_text = "Player 2 win!"  # Set winner text
         stopwatch_running = False
         start_time = None
 
@@ -205,4 +204,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
- 
