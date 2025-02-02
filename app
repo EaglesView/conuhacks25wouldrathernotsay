@@ -13,9 +13,9 @@ import time
 # Global state for players
 pressed_player1 = False
 pressed_player2 = False
-loop = False
+loop = True
 game_result = {"score": 0.0, "message": ""}
-countdownStart = False
+countdownStart = True
 stopwatch_running = False
 start_time = None
 end_time = None
@@ -161,26 +161,25 @@ while True:
             touch_player1 = True
 
     # Determine Winner
-    if touch_player1 and pressed_player1 and loop and stopwatch_running:
+    if touch_player1 and loop:
         end_time = time.time()
-        elapsed_time = end_time - start_time
         print("🍎 Player 1 wins!")
         loop = False
         pressed_player1 = False
-        game_result = {"score": f"{elapsed_time:.2f}", "message": "Player 1 wins!"}
+        game_result = {"score": f"0", "message": "Player 1 wins!"}
         stopwatch_running = False
         start_time = None
 
     elif pressed_player1 and not touch_player1:
         pressed_player1 = False
 
-    if touch_player2 and pressed_player2 and loop and stopwatch_running:
+    if touch_player2 and loop:
         end_time = time.time()
-        elapsed_time = end_time - start_time
+
         print("🍊 Player 2 wins!")
         loop = False
         pressed_player2 = False
-        game_result = {"score": f"{elapsed_time:.2f}", "message": "Player 2 wins!"}
+        game_result = {"score": f"0", "message": "Player 2 wins!"}
         stopwatch_running = False
         start_time = None
 
