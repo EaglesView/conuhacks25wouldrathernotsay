@@ -8,7 +8,6 @@ const Background = ({ children, animateDown }: { children: ReactNode; animateDow
     visible: { y: 0, opacity: 1, transition: { duration: 1, ease: "easeOut" } },
     exit: { y: 2000, opacity: 0.5, transition: { duration: 1, ease: "easeIn" } }, // Moves down on play
   };
-
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">
       {/* Children content (above background) */}
