@@ -15,8 +15,8 @@ const MenuScreen = () => {
       {gameStatus === "running" ? (
         <GameScreen onGameOver={() => setGameStatus("over")} />
       ) : (
-        <Card className="min-w-96 min-h-64 flex flex-col items-center justify-center">
-          <h1 className="text-4xl font-bold mb-6">Far West AI Game</h1>
+        <Card className="min-w-96 min-h-64 flex flex-col gap-10 items-center justify-center">
+          <h1 className="text-6xl mb-6">Cowboy Shootout</h1>
           {gameStatus === "over" && <p className="text-lg text-red-500 mb-4">Game Over!</p>}
           <button
             onClick={startGame}
