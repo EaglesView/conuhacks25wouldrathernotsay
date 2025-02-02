@@ -21,7 +21,7 @@ const GameScreen = ({ onGameOver }: { onGameOver: () => void }) => {
           winner: winner,
         }),
       });
-      response?(<Button title="Send Data" onClick={handlePost} />      ):("");
+      response ? (<Button title="Send Data" onClick={handlePost} />) : ("");
       const data = await response.json();
       console.log("Response from server:", data);
     } catch (error) {
@@ -46,10 +46,11 @@ const GameScreen = ({ onGameOver }: { onGameOver: () => void }) => {
   }, []);
 
   return (
+
     <div className="flex justify-center items-center">
       <p className="fixed bottom-0">{status}</p>
       {imageData ? (
-        <img id="video_feed" src="http://192.168.102.5:5000/video_feed" className="transform scale-x-[-1] rounded-sm w-auto h-screen"/>
+        <img id="video_feed" src="http://192.168.102.5:5000/video_feed" className="transform scale-x-[-1] rounded-sm w-auto h-screen" />
       ) : (
         <p>Waiting for game data...</p>
       )}
