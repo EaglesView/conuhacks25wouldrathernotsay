@@ -3,12 +3,12 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
-import { Carousel, CarouselContent, CarouselItem } from "@/components/ui/carousel"; // Ensure Carousel is properly set up
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"; // Ensure Carousel is properly set up
 
 const hats = [
-  "/hats/hat1.png",
-  "/hats/hat2.png",
-  "/hats/hat3.png",
+  "hat1.png",
+  "hat2.png",
+  "hat3.png",
 ]; // Replace with actual image paths
 
 interface HatSelectionDialogProps {
@@ -23,27 +23,29 @@ const HatSelectionDialog = ({ isOpen, onClose, onStartGame }: HatSelectionDialog
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md flex justify-center items-center flex-col">
         <DialogHeader>
           <DialogTitle>Select Your Hat</DialogTitle>
         </DialogHeader>
 
         {/* Hat Selection Carousel */}
-        <Carousel className="w-full">
+        <Carousel className="w-[80%]">
           <CarouselContent>
             {hats.map((hat, index) => (
               <CarouselItem key={index} className="flex justify-center">
                 <img
                   src={hat}
                   alt={`Hat ${index + 1}`}
-                  className={`w-24 h-24 cursor-pointer border-2 ${
-                    selectedHat === hat ? "border-blue-500" : "border-transparent"
+                  className={`w-24 h-24 cursor-pointer rounded-lg ${
+                    selectedHat === hat ? "bg-black/20" : "bg-none"
                   }`}
                   onClick={() => setSelectedHat(hat)}
                 />
               </CarouselItem>
             ))}
           </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
         </Carousel>
 
         {/* Terms and Conditions Checkbox */}
