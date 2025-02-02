@@ -21,7 +21,7 @@ const MenuScreen = () => {
         <GameScreen onGameOver={() => setGameStatus("over")} />
       ) : (
         <Card className="min-w-96 min-h-64 flex flex-col gap-10 items-center justify-center mb-60">
-          <h1 className={`text-6xl mb-6 p-4 text-black `}>Cowboy Shootout</h1>
+          <img src="/Cowboy Shootout.svg" alt="Logo" className="w-full " />
           {gameStatus === "over" && <p className="text-lg text-red-500 mb-4">Game Over!</p>}
           <button
             onClick={startGame}
