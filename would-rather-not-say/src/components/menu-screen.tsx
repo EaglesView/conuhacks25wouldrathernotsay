@@ -3,6 +3,9 @@ import { useState } from "react";
 import Card from "./ui/card";
 import GameScreen from "./gameFrame";
 
+
+
+
 const MenuScreen = () => {
   const [gameStatus, setGameStatus] = useState<"idle" | "running" | "over">("idle");
 
@@ -10,13 +13,15 @@ const MenuScreen = () => {
     setGameStatus("running");
   };
 
+
+
   return (
     <div className="fixed flex items-center justify-center transition-all duration-500">
       {gameStatus === "running" ? (
         <GameScreen onGameOver={() => setGameStatus("over")} />
       ) : (
-        <Card className="min-w-96 min-h-64 flex flex-col gap-10 items-center justify-center">
-          <h1 className="text-6xl mb-6">Cowboy Shootout</h1>
+        <Card className="min-w-96 min-h-64 flex flex-col gap-10 items-center justify-center mb-60">
+          <h1 className={`text-6xl mb-6 p-4 text-black `}>Cowboy Shootout</h1>
           {gameStatus === "over" && <p className="text-lg text-red-500 mb-4">Game Over!</p>}
           <button
             onClick={startGame}
