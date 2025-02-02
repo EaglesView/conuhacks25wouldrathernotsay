@@ -19,6 +19,7 @@ countdownStart = True
 stopwatch_running = False
 start_time = None
 end_time = None
+winner_text = ""  # Variable to hold the winner text
 
 # Create an asyncio event loop for the countdown
 countdown_loop = asyncio.new_event_loop()
@@ -160,43 +161,43 @@ while True:
         if 150 <= angle <= 210:
             touch_player1 = True
 
-    # Determine Winner
+    # Determine Winner (fixing issue)
     if touch_player1 and pressed_player1 and loop:
         end_time = time.time()
         print("🍎 Player 1 wins!")
         loop = False
-        pressed_player1 = False
+        pressed_player1 = False  # Only reset after confirming the win
         game_result = {"score": f"0", "message": "Player 1 wins!"}
+        winner_text = "Player 1 wins!"  # Set winner text
         stopwatch_running = False
         start_time = None
 
-    elif pressed_player1 and not touch_player1:
-        pressed_player1 = False
-
-    if touch_player2 and pressed_player2 and loop:
+    elif touch_player2 and pressed_player2 and loop:
         end_time = time.time()
-
         print("🍊 Player 2 wins!")
         loop = False
-        pressed_player2 = False
-        game_resulrrrrt = {"score": f"0", "message": "Player 2 wins!"}
+        pressed_player2 = False  # Only reset after confirming the win
+        game_result = {"score": f"0", "message": "Player 2 wins!"}
+        winner_text = "Player 2 wins!"  # Set winner text
         stopwatch_running = False
         start_time = None
 
-    elif pressed_player2 and not touch_player2:
-        pressed_player2 = False
-
-    # Check for "R" key press to reset loop and countdownStart
+    # Reset if "R" key is pressed
     if cv2.waitKey(1) & 0xFF == ord('r'):  # Check if 'R' is pressed
         loop = True
         countdownStart = True
+        winner_text = ""  # Clear winner text
         print("🔄 Resetting game...")
+
+    # Display the winner text on the frame if available
+    if winner_text != "":
+        cv2.putText(frame, winner_text, (int(width // 3.5), int(height // 2)), cv2.FONT_HERSHEY_SIMPLEX, 3, (0, 0, 255), 5, cv2.LINE_AA)
 
     # Combine left and right views with skeleton overlay
     combined = np.hstack((left_view, right_view))
     flipped = cv2.flip(combined, 1)
 
-    cv2.imshow("Final Output", flipped)
+    cv2.imshow("Final Output", combined)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):  # Exit on 'q' press
         break
