@@ -7,12 +7,12 @@ import http.server
 import socketserver
 import base64
 import json
-
+import time
 # Global state for players (optional)
 pressed_player1 = False
 pressed_player2 = False
 loop = False
-
+game_result = {"score": 0.0, "message": ""}
 class MyHandler(http.server.SimpleHTTPRequestHandler):
     def do_OPTIONS(self):
         self.send_response(200)
@@ -52,6 +52,23 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Origin", "*")  # Allow all origins or specify your frontend URL
         self.end_headers()
         self.wfile.write(json.dumps(response).encode("utf-8"))
+    
+    def do_GET(self):
+        global loop, game_result
+        if not loop:  # When loop becomes False, return data
+            response = {
+                "score": game_result["score"],  # Example float score
+                "message": game_result["message"]  # Example string message
+            }
+            self.send_response(200)
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
+            self.wfile.write(json.dumps(response).encode("utf-8"))
+        else:
+            self.send_response(204)  # No content if game is still running
+            self.send_header("Access-Control-Allow-Origin", "*")
+            self.end_headers()
 
 def start_http_server(port=8080):
     with socketserver.TCPServer(("0.0.0.0", port), MyHandler) as httpd:
@@ -153,6 +170,7 @@ while True:
         print("🍎🍎🍎🍎🍎🍎🍎🍎")
         loop = False
         pressed_player1 = False
+        game_result = {"score": 50.7, "message": "Player 1 wins!"}  # Example values
     elif pressed_player1 and not touch_player1:
         pressed_player1 = False
 
@@ -160,6 +178,7 @@ while True:
         print("🍊🍊🍊🍊🍊🍊🍊🍊🍊")
         loop = False
         pressed_player2 = False
+        game_result = {"score": 42.3, "message": "Player 2 wins!"}  # Example values
     elif pressed_player2 and not touch_player2:
         pressed_player2 = False
 
