@@ -2,13 +2,13 @@ import React from 'react';
 import Image from 'next/image';
 
 interface PlayerHealthProps {
-  playerPts: number; // Number of health points remaining
+  player: number; // Number of health points remaining
   reverse?: boolean; // Whether to reverse the order
   name: string; // Player name
   position: 'left' | 'right'; // Positioning of the HUD
 }
 
-const PlayerHealthHud = ({ playerPts, reverse = false, name, position }: PlayerHealthProps) => {
+const PlayerHealthHud = ({ player, reverse = false, name, position }: PlayerHealthProps) => {
   const maxHealth = 3;
   const healthArray = [...Array(maxHealth)].map((_, index) => index); // Create an array [0,1,2]
 
@@ -21,7 +21,7 @@ const PlayerHealthHud = ({ playerPts, reverse = false, name, position }: PlayerH
         {healthArray.map((index) => (
           <Image
             key={index}
-            src={index < playerPts ? '/start_light.svg' : '/start_dark.svg'}
+            src={index < player ? '/start_light.svg' : '/start_dark.svg'}
             alt="Health Icon"
             width={75}
             height={75}
@@ -31,15 +31,12 @@ const PlayerHealthHud = ({ playerPts, reverse = false, name, position }: PlayerH
     </div>
   );
 };
-interface GameHudProps {
-  player1:{name:string,health:number};
-  player2:{name:string,health:number};
-}
-export const GameHUD:React.FC<GameHudProps> = ({player1,player2}) => {
+
+export const GameHUD = ({ player1Health, player2Health }: { player1Health: number; player2Health: number }) => {
   return (
-    <div className="absolute w-screen top-6">
-      <PlayerHealthHud playerPts={player1.health} name={player1.name} position="left" />
-      <PlayerHealthHud playerPts={player2.health} name={player2.name} position="right" reverse />
+    <div className="relative w-screen">
+      <PlayerHealthHud player={player1Health} name="User1" position="left" />
+      <PlayerHealthHud player={player2Health} name="User2" position="right" reverse />
     </div>
   );
 };

@@ -26,18 +26,7 @@ const MenuScreen:React.FC<MenuScreenProps> = ({buttonTitle}) => {
 
     // Start game logic
     const startGame = async () => {
-        setAnimateBackground(true);
-        
-        // Play a random start sound
-        const startSounds = ["getReady.mp3", "toYourHolsters.mp3"];
-        const randomSound = startSounds[Math.floor(Math.random() * startSounds.length)];
-        playSound(randomSound);
-
-        setTimeout(() => setGameStatus("running"), 1000);
-
-        setTimeout(() => {
-            playSound("shoot.mp3");
-        }, 10000);
+        setGameStatus("running");
 
         try {
             const response = await fetch('http://192.168.102.86:8080/', {
