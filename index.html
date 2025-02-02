@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stream MJPEG</title>
+</head>
+<body>
+    <h1>Flux vidéo ultra-fluide</h1>
+    <img id="video_feed" src="http://192.168.102.5:5000/video_feed" width="640" height="480" />
+
+    <script>
+        const img = document.getElementById("video_feed");
+        img.onerror = () => {
+            console.log("Connexion perdue. Tentative de reconnexion...");
+            setTimeout(() => location.reload(), 3000);
+        };
+    </script>
+</body>
+</html>
