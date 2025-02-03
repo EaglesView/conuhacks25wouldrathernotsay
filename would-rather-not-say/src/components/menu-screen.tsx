@@ -6,14 +6,12 @@ import GameScreen from "./gameFrame";
 import Background from "./background";
 import { Star } from "lucide-react";
 import { GameHUD } from "./gameHUD";
-interface MenuScreenProps {
-    buttonTitle?:string;
-}
-const MenuScreen:React.FC<MenuScreenProps> = ({buttonTitle}) => {
+
+const MenuScreen = () => {
     const [gameStatus, setGameStatus] = useState<"idle" | "running" | "over">("idle");
     const [gameResult, setGameResult] = useState<{ winner: string } | null>(null);
     const [animateBackground, setAnimateBackground] = useState(false);
-    let panda;
+    
     // Health state
     const [player1Health, setPlayer1Health] = useState(3);
     const [player2Health, setPlayer2Health] = useState(3);
@@ -43,29 +41,23 @@ const MenuScreen:React.FC<MenuScreenProps> = ({buttonTitle}) => {
         }
     };
 
+    // Handle round results from GameScreen
     const handleRoundEnd = (winner: string) => {
-        setGameStatus("over");
-        console.log(winner)
-        panda = winner;
         if (winner === "Player 1") {
-            setPlayer2Health((prevHealth) => {
-                const newHealth = Math.max(0, prevHealth - 1);
-                if (newHealth === 0) {
-                    console.log("GAME OVER - Player 2 lost!");
-                }
-                return newHealth;
-            });
+            setPlayer2Health((prev) => Math.max(0, prev - 1));
         } else if (winner === "Player 2") {
-            setPlayer1Health((prevHealth) => {
-                const newHealth = Math.max(0, prevHealth - 1);
-                if (newHealth === 0) {
-                    console.log("GAME OVER - Player 1 lost!");
-                }
-                return newHealth;
-            });
+            setPlayer1Health((prev) => Math.max(0, prev - 1));
         }
+
+        if (player1Health === 1 && winner === "Player 2") {
+            console.log("GAME OVER - Player 1 lost!");
+        } else if (player2Health === 1 && winner === "Player 1") {
+            console.log("GAME OVER - Player 2 lost!");
+        }
+
+        setGameStatus("over");
+        setAnimateBackground(false);
     };
-    
 
     return (
         <Background animateDown={animateBackground}>
@@ -100,7 +92,7 @@ const MenuScreen:React.FC<MenuScreenProps> = ({buttonTitle}) => {
                             whileTap={{ scale: 0.9 }}
                         >
                             <Star className="svg-icon" />
-                            {buttonTitle ? buttonTitle : "Start Game"}
+                            {gameStatus === "over" ? "Restart Game" : "Start Game"}
                         </motion.button>
                     </Card>
                 )}

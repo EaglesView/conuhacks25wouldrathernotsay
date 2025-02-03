@@ -8,6 +8,7 @@ const Background = ({ children, }: { children: ReactNode }) => {
     hidden: { y: 100, opacity: 0 },
     visible: { y: 0, opacity: 1, transition: { duration: 1, ease: "easeOut" } },
   };
+
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center">
       {/* Children content (placed above the background) */}

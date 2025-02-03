@@ -5,7 +5,7 @@ import { EndGameDialog } from "./endGameDialog";
 import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 
-const GameScreen = ({ onGameOver }: { onGameOver: (theBigWinner: string) => void }) => {
+const GameScreen = ({ onGameOver }: { onGameOver: (winner: string) => void }) => {
   const [status, setStatus] = useState("Waiting for game data...");
   const [imageData, setImageData] = useState<boolean>(false);
   const [winner, setWinner] = useState<any>(null);
@@ -50,13 +50,12 @@ const GameScreen = ({ onGameOver }: { onGameOver: (theBigWinner: string) => void
   useEffect(() => {
     const checkWinner = async () => {
       try {
-        const response = await fetch("http://192.168.102.86:8080/");
+        const response = await fetch("http://192.168.102.5:8080/");
         if (response.status === 200) {
           const data = await response.json();
-          console.log(data);
-          if (data && data.message) {
-            setWinner(data.message);
-            router.push(`/lol?message=${encodeURIComponent(data.message)}`);
+          if (data.winner) {
+            setWinner(data.winner);
+            onGameOver(data.winner); // Notify MenuScreen
           }
         }
       } catch (error) {
@@ -77,7 +76,6 @@ const GameScreen = ({ onGameOver }: { onGameOver: (theBigWinner: string) => void
       ) : (
         <p>Waiting for game data...</p>
       )}
-
     </div>
   );
 };
