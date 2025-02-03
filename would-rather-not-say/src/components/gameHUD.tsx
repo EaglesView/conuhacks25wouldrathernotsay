@@ -14,7 +14,7 @@ const PlayerHealthHud = ({ player, reverse = false, name, position }: PlayerHeal
 
   return (
     <div
-      className={`absolute top-4 ${position === 'left' ? 'left-4 text-left' : 'right-4 text-right'}`}
+      className={`fixed top-4 ${position === 'left' ? 'left-4 text-left' : 'right-4 text-right'}`}
     >
       <p className="text-black text-4xl mb-2">{name}</p>
       <div className={`flex gap-2 ${reverse ? 'flex-row-reverse' : ''}`}>

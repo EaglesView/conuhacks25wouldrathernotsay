@@ -1,24 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
-<<<<<<< HEAD
 import { EndGameDialog } from "./endGameDialog";
 import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 const GameScreen = ({ onGameOver }: { onGameOver: (theBigWinner: string) => void }) => {
   const [status, setStatus] = useState("Waiting for game data...");
   const [imageData, setImageData] = useState<boolean>(false);
   const [winner, setWinner] = useState<any>(null);
   const router = useRouter();
-=======
-import { Button } from "./ui/button";
-
-const GameScreen = ({ onGameOver }: { onGameOver: () => void }) => {
-  const [status, setStatus] = useState("Waiting for game data...");
-  const [imageData, setImageData] = useState<boolean>(false);
-  const [time, setTime] = useState(0);
-  const [winner, setWinner] = useState("");
->>>>>>> parent of a43d6c7 (added pages to project)
 
   const handlePost = async () => {
     try {
@@ -56,7 +47,6 @@ const GameScreen = ({ onGameOver }: { onGameOver: () => void }) => {
     }, 3000);
   }, []);
 
-<<<<<<< HEAD
   useEffect(() => {
     const checkWinner = async () => {
       try {
@@ -78,8 +68,6 @@ const GameScreen = ({ onGameOver }: { onGameOver: () => void }) => {
     return () => clearInterval(winnerCheckInterval);
   }, [onGameOver]);
 
-=======
->>>>>>> parent of a43d6c7 (added pages to project)
   return (
 
     <div className="flex justify-center items-center">

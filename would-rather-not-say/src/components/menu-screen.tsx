@@ -71,13 +71,13 @@ const MenuScreen:React.FC<MenuScreenProps> = ({buttonTitle}) => {
         <Background animateDown={animateBackground}>
             <div className="fixed flex items-center justify-center transition-all duration-500">
                 {gameStatus === "running" ? (
-                    <>
+                    <div className="flex items-center justify-center">
                         <GameScreen onGameOver={handleRoundEnd} />
                         <GameHUD
                             player1={{ name: "Cristie", health: player1Health }}
                             player2={{ name: "Opponent", health: player2Health }}
                         />
-                    </>
+                    </div>
                 ) : (
                     <Card className="min-w-96 min-h-64 flex flex-col gap-10 items-center justify-center mb-60">
                         <motion.img
